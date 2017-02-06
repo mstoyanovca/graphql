@@ -1,19 +1,16 @@
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-
 const User = mongoose.model('user');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
     done(err, user);
   });
 });
-
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) { return done(err); }
@@ -30,6 +27,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 
 function signup({ email, password, req }) {
   const user = new User({ email, password });
+  if (!email || !password) { throw new Error('You must provide an email and password.'); }
 
   return User.findOne({ email })
     .then(existingUser => {

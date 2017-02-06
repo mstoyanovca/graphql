@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
 const UserSchema = new Schema({
   email: String,
   password: String
@@ -20,7 +19,6 @@ UserSchema.pre('save', function save(next) {
     });
   });
 });
-
 
 UserSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {

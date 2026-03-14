@@ -18,3 +18,4 @@
 - populate your MongDB connection string in server.js
 - npm run dev
 - open at http://localhost:4000
+- test

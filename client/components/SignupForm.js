@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import Header from './Header';
-import AuthForm from './AuthForm';
-import {graphql} from 'react-apollo';
-import mutation from '../mutations/Signup';
-import query from '../queries/CurrentUser';
-import { hashHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+import gql from 'graphql-tag';
+
+import Header from './Header.js';
+import AuthForm from './AuthForm.js';
+
+import mutation from '../mutations/Signup.js';
+import query from '../queries/CurrentUser.js';
 
 class SignupForm extends Component {
     constructor(props) {
@@ -13,8 +15,9 @@ class SignupForm extends Component {
     }
 
     componentWillUpdate(nextProps) {
+        const navigate = useNavigate();
         if(!this.props.data.user && nextProps.data.user) {
-            hashHistory.push('/dashboard');
+            navigate('/dashboard');
         }
     }
 
@@ -39,6 +42,5 @@ class SignupForm extends Component {
     }
 }
 
-export default graphql(query) (
-    graphql(mutation)(SignupForm)
-);
+// export default graphql(query) (graphql(mutation)(SignupForm));
+export default SignupForm;

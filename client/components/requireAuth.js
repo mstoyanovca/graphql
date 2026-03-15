@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
-import {graphql} from 'react-apollo';
-import currentUserQuery from '../queries/CurrentUser';
-import { hashHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
 
-export default (WrappedComponent) => {
-    class RequireAuth extends Component {
-        componentWillUpdate(nextProps) {
-            if(!nextProps.data.loading && !nextProps.data.user) {
-                hashHistory.push('/login');
-            }
-        }
+import currentUserQuery from '../queries/CurrentUser.js';
 
-        render() {
-            return <WrappedComponent {...this.props} />;
-        }
+const RequireAuth = () => {
+    const { data, loading, error } = useQuery(currentUserQuery);
+
+    if(!loading || !data) {
+        const navigate = useNavigate();
+        navigate('/login');
     }
 
-    return graphql(currentUserQuery)(RequireAuth);
+        /*componentWillUpdate(nextProps) {
+            if(!nextProps.data.loading && !nextProps.data.user) {
+                const navigate = useNavigate();
+                navigate('/login');
+            }
+        }*/
+
+    return {...this.props};
 };
+
+export default RequireAuth;

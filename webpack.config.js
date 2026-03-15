@@ -1,7 +1,7 @@
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import webpack from 'webpack'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
-module.exports = {
+export default {
   entry: './client/index.js',
   output: {
     path: '/',
@@ -20,5 +20,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'client/index.html'
     })
-  ]
+  ],
+  mode: 'development'
 };

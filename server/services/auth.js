@@ -1,16 +1,24 @@
-const mongoose = require('mongoose');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const User = mongoose.model('user');
+import mongoose from 'mongoose'
+import { Schema } from 'mongoose'
+import passport from 'passport'
+import { Strategy as LocalStrategy } from 'passport-local';
+
+const UserSchema = new Schema({
+  email: String,
+  password: String
+});
+const User = mongoose.model('user', UserSchema);
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
+
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
     done(err, user);
   });
 });
+
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
   User.findOne({ email: email.toLowerCase() }, (err, user) => {
     if (err) { return done(err); }
@@ -54,4 +62,4 @@ function login({ email, password, req }) {
   });
 }
 
-module.exports = { signup, login };
+export default { signup, login };

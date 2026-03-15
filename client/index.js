@@ -1,16 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ApolloClient, {createNetworkInterface} from 'apollo-client';
-import { ApolloProvider } from 'react-apollo';
-import {Router, hashHistory, Route, IndexRoute} from 'react-router';
-import App from './components/App';
-import Header from './components/Header';
-import LoginForm from './components/LoginForm';
-import SignupForm from './components/SignupForm';
-import Dashboard from './components/Dashboard';
-import requireAuth from './components/requireAuth';
+import {createRoot} from 'react-dom/client';
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
-const networkInterface = createNetworkInterface({
+import App from './components/App.js';
+import LoginForm from './components/LoginForm.js';
+import SignupForm from './components/SignupForm.js';
+import Dashboard from './components/Dashboard.js';
+import RequireAuth from './components/requireAuth.js';
+
+const httpLink = createHttpLink({
     uri: '/graphql',
     opts: {
         credentials: 'same-origin'
@@ -18,21 +18,24 @@ const networkInterface = createNetworkInterface({
 });
 
 const client = new ApolloClient({
-    networkInterface,
+    link: httpLink,
+    cache: new InMemoryCache(),
     dataIdFromObject: o => o.id
 });
 
 const Root = () => {
   return (
     <ApolloProvider client={client}>
-        <Router history={hashHistory}>
-            <Route path="/" component={App}></Route>
-            <Route path="login" component={LoginForm}></Route>
-            <Route path="signup" component={SignupForm}></Route>
-            <Route path="dashboard" component={requireAuth(Dashboard)}></Route>
+        <Router>
+            <Routes>
+                <Route path="/" element={<App/>}></Route>
+                <Route path="login" element={<LoginForm/>}></Route>
+                <Route path="signup" element={<SignupForm/>}></Route>
+                <Route path="dashboard" element={<RequireAuth><Dashboard/></RequireAuth>}></Route>
+            </Routes>
         </Router>
     </ApolloProvider>
   );
 };
 
-ReactDOM.render(<Root />, document.querySelector('#root'));
+createRoot(document.getElementById("root")).render(<Root />);

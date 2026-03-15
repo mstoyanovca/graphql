@@ -1,44 +1,45 @@
-import React, { Component } from 'react';
-import Header from './Header';
-import AuthForm from './AuthForm';
-import mutation from '../mutations/Login';
-import {graphql} from 'react-apollo';
-import query from '../queries/CurrentUser';
-import { hashHistory } from 'react-router';
+import React, { Component, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 
-class LoginForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {errors: []};
+import App from './App.js';
+import Header from './Header.js';
+import AuthForm from './AuthForm.js';
+
+import query from '../queries/CurrentUser.js';
+import mutation from '../mutations/Login.js';
+
+const LoginForm  = () => {
+    const [formState, setFormState] = useState({ email: '', password: '' });
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const { data, loading, error } = useQuery(query);
+    if(data) {
+        const navigate = useNavigate();
+        navigate('/dashboard');
     }
 
-    componentWillUpdate(nextProps) {
-        if(!this.props.data.user && nextProps.data.user) {
-            hashHistory.push('/dashboard');
-        }
-    }
-
-    onSubmit({email, password}) {
-        this.props.mutate({
-            variables: {email, password},
+    const onSubmit = () => {
+        const { id, email } = useMutation(mutation, {
+            variables: {
+                email: formState.email,
+                password: formState.password
+            },
             refetchQueries: [{query}]
         }).catch(res => {
             const errors = res.graphQLErrors.map(error => error.message);
-            this.setState({errors});
+            setErrorMessage(errors);
         });
     }
 
-    render() {
-        return(
-            <div className="container">
-                <Header />
-                <h4>Login</h4>
-                <AuthForm errors={this.state.errors} onSubmit={this.onSubmit.bind(this)} />
-            </div>
-        );
-    }
+    return(
+        <div id="login" className="container">
+            <Header />
+            <h4>Login</h4>
+            <AuthForm errors={errorMessage} onSubmit={onSubmit.bind(this)} />
+        </div>
+    );
 }
 
-export default graphql(query)(
-    graphql(mutation)(LoginForm)
-);
+export default LoginForm;

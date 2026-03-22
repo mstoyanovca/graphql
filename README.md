@@ -27,3 +27,5 @@
 - Express is a minimal backend framework for Node.js
 - Apollo Client is a state management library for fetching, caching, and modifying data using GraphQL
 - Mongoose is part of the backend, typically in a MERN stack (MongoDB, Express, React, Node.js). It acts as a bridge between Node.js/Express and MongoDB
+- the code on this branch is in process of being updated to the latest dependency versions
+  
